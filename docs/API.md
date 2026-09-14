@@ -113,3 +113,70 @@ Returns the currently authenticated user's profile, salon, and role.
 ---
 
 **Auth header format for all protected endpoints:**
+
+## Customer Endpoints
+
+All endpoints require `Authorization: Token <token>`. All results are automatically scoped to the authenticated user's salon — a request can never see, edit, or delete another salon's customers.
+
+### GET /customers/
+
+List all customers belonging to the authenticated user's salon.
+
+**Query params:** `?search=<text>` — filters by name or phone (partial match)
+
+**Success response — 200 OK:**
+```json
+[
+  {
+    "id": 1,
+    "salon": 1,
+    "name": "string",
+    "phone": "string",
+    "email": "string",
+    "date_of_birth": "YYYY-MM-DD or null",
+    "notes": "string",
+    "created_at": "ISO datetime",
+    "updated_at": "ISO datetime"
+  }
+]
+```
+
+### POST /customers/
+
+Create a customer under the authenticated user's salon. `salon` is set automatically — do not send it.
+
+**Request body:**
+```json
+{
+  "name": "string (required)",
+  "phone": "string (optional)",
+  "email": "string (optional)",
+  "date_of_birth": "YYYY-MM-DD (optional)",
+  "notes": "string (optional)"
+}
+```
+
+**Success response — 201 Created:** same shape as list item above.
+
+**Error responses:**
+- `400 Bad Request` — validation errors (e.g. missing `name`)
+- `401 Unauthorized` — no/invalid token
+
+### GET /customers/{id}/
+
+Retrieve a single customer. Returns `404` if the customer doesn't exist **or** belongs to a different salon (tenant isolation — never reveals existence of other salons' data).
+
+### PUT/PATCH /customers/{id}/
+
+Update a customer. Same tenant rules as above — `404` if not owned by your salon.
+
+**Request body (PATCH, partial):**
+```json
+{ "phone": "string" }
+```
+
+### DELETE /customers/{id}/
+
+Delete a customer. Same tenant rules — `404` if not owned by your salon.
+
+**Success response:** `204 No Content`
