@@ -13,11 +13,11 @@ A multi-tenant SaaS platform for salons, barbershops, and beauty businesses — 
 **Implemented:**
 - Token-based authentication (register, login, current-user endpoint)
 - Multi-tenant salon architecture with role-based access (owner / manager / staff)
-- Backend-enforced tenant isolation — every request is scoped to the authenticated user's salon
-- Customer CRUD (create, list, search, update, delete) with full tenant isolation
-- Themed Next.js dashboard: login, customer list, add/edit/delete customer
+- Backend-enforced tenant isolation — every request is scoped to the authenticated user's salon, verified with cross-tenant access tests
+- Customer, Staff, and Service CRUD — create, list, search, update, delete — all tenant-isolated
+- Full dashboard UI: sidebar navigation, list views with live counts, avatars, status badges, empty states, and add/edit/delete forms for all three modules
 
-**Planned next:** Staff, Services, Appointments, POS/Payments, Dashboard, Retention automation. See `docs/API.md` for the full endpoint contract and the product blueprint in `docs/` for the complete roadmap.
+**Planned next:** Appointments (with availability logic), POS/Payments, Dashboard/analytics, Retention automation, WhatsApp and AI integration. See `docs/API.md` for the full endpoint contract and the product blueprint in `docs/` for the complete roadmap.
 
 ## Tech Stack
 
