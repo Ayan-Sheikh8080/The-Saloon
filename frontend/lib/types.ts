@@ -29,3 +29,26 @@ export interface Customer {
   created_at: string;
   updated_at: string;
 }
+export interface Staff {
+  id: number;
+  salon: number;
+  name: string;
+  title: string;
+  phone: string;
+  email: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Service {
+  id: number;
+  salon: number;
+  name: string;
+  category: string;
+  price: string;
+  duration_minutes: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
