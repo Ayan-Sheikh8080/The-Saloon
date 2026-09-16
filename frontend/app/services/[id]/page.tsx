@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppShell } from "@/components/app-shell";
 
 export default function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -76,9 +77,9 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
 
   if (!ready || isLoading) return null;
 
-  return (
-    <div className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto max-w-lg">
+    return (
+    <AppShell>
+      <div className="mx-auto max-w-lg px-8 py-10">
         <Card className="border-border/60">
           <CardHeader>
             <CardTitle className="font-heading text-2xl italic">Edit Service</CardTitle>
@@ -126,6 +127,6 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </AppShell>
+    );
 }

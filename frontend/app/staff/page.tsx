@@ -2,13 +2,19 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { UserRound, Plus } from "lucide-react";
 import { api } from "@/lib/api";
 import { Staff } from "@/lib/types";
 import { useAuthGuard } from "@/lib/use-auth";
+import { AppShell } from "@/components/app-shell";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
+import { AvatarCircle } from "@/components/avatar-circle";
+import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 
 export default function StaffPage() {
-  const { ready, logout } = useAuthGuard();
+  const { ready } = useAuthGuard();
   const router = useRouter();
 
   const { data: staff, isLoading, isError } = useQuery({
@@ -20,26 +26,32 @@ export default function StaffPage() {
   if (!ready) return null;
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center gap-4">
-          <a href="/customers" className="text-sm text-muted-foreground hover:text-foreground">Customers</a>
-          <a href="/staff" className="text-sm text-foreground">Staff</a>
-          <a href="/services" className="text-sm text-muted-foreground hover:text-foreground">Services</a>
-        </div>
-
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="font-heading text-3xl italic text-foreground">Staff</h1>
-          <div className="flex gap-3">
-            <Button onClick={() => router.push("/staff/new")}>New Staff</Button>
-            <Button variant="outline" onClick={logout}>Sign out</Button>
-          </div>
-        </div>
+    <AppShell>
+      <div className="mx-auto max-w-5xl px-8 py-10">
+        <PageHeader
+          title="Staff"
+          description={
+            staff ? `${staff.length} team member${staff.length === 1 ? "" : "s"}` : undefined
+          }
+          action={
+            <Button onClick={() => router.push("/staff/new")}>
+              <Plus className="mr-1.5 h-4 w-4" />
+              New Staff
+            </Button>
+          }
+        />
 
         {isLoading && <p className="text-muted-foreground">Loading staff...</p>}
         {isError && <p className="text-destructive">Couldn&apos;t load staff. Please try again.</p>}
+
         {staff && staff.length === 0 && (
-          <p className="text-muted-foreground">No staff yet. Add your first one to get started.</p>
+          <EmptyState
+            icon={UserRound}
+            title="No staff yet"
+            description="Add your team members to start assigning appointments."
+            actionLabel="Add Staff"
+            onAction={() => router.push("/staff/new")}
+          />
         )}
 
         {staff && staff.length > 0 && (
@@ -58,15 +70,18 @@ export default function StaffPage() {
                   <tr
                     key={member.id}
                     onClick={() => router.push(`/staff/${member.id}`)}
-                    className="cursor-pointer border-t border-border hover:bg-accent/40"
+                    className="cursor-pointer border-t border-border transition-colors hover:border-l-2 hover:border-l-primary hover:bg-accent/40"
                   >
-                    <td className="px-4 py-3 text-foreground">{member.name}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <AvatarCircle name={member.name} />
+                        <span className="text-foreground">{member.name}</span>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground">{member.title || "—"}</td>
                     <td className="px-4 py-3 text-muted-foreground">{member.phone || "—"}</td>
                     <td className="px-4 py-3">
-                      <span className={member.is_active ? "text-foreground" : "text-muted-foreground"}>
-                        {member.is_active ? "Active" : "Inactive"}
-                      </span>
+                      <StatusBadge active={member.is_active} />
                     </td>
                   </tr>
                 ))}
@@ -75,6 +90,6 @@ export default function StaffPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppShell>
   );
 }
