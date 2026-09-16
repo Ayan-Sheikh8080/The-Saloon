@@ -180,3 +180,45 @@ Update a customer. Same tenant rules as above — `404` if not owned by your sal
 Delete a customer. Same tenant rules — `404` if not owned by your salon.
 
 **Success response:** `204 No Content`
+
+## Staff Endpoints
+
+Same auth/tenant rules as Customers (see above).
+
+### GET /staff/
+List staff for the authenticated user's salon. `?search=<text>` filters by name or title.
+
+### POST /staff/
+```json
+{
+  "name": "string (required)",
+  "title": "string (optional)",
+  "phone": "string (optional)",
+  "email": "string (optional)",
+  "is_active": "boolean (optional, default true)"
+}
+```
+
+### GET/PUT/PATCH/DELETE /staff/{id}/
+Same tenant rules as Customers — `404` if not owned by your salon.
+
+## Service Endpoints
+
+Same auth/tenant rules as Customers.
+
+### GET /services/
+List services for the authenticated user's salon. `?search=<text>` filters by name.
+
+### POST /services/
+```json
+{
+  "name": "string (required)",
+  "category": "string (optional)",
+  "price": "decimal string, e.g. \"1200.00\" (required)",
+  "duration_minutes": "integer (required)",
+  "is_active": "boolean (optional, default true)"
+}
+```
+
+### GET/PUT/PATCH/DELETE /services/{id}/
+Same tenant rules as Customers.
