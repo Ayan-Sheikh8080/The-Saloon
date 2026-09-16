@@ -1,14 +1,19 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { Users, Plus } from "lucide-react";
 import { api } from "@/lib/api";
 import { Customer } from "@/lib/types";
 import { useAuthGuard } from "@/lib/use-auth";
-import { useRouter } from "next/navigation";
+import { AppShell } from "@/components/app-shell";
+import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
+import { AvatarCircle } from "@/components/avatar-circle";
 import { Button } from "@/components/ui/button";
 
 export default function CustomersPage() {
-  const { ready, logout } = useAuthGuard();
+  const { ready } = useAuthGuard();
   const router = useRouter();
 
   const { data: customers, isLoading, isError } = useQuery({
@@ -20,42 +25,34 @@ export default function CustomersPage() {
   if (!ready) return null;
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10">
-           <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center gap-4">
-          <a href="/customers" className="text-sm text-foreground">Customers</a>
-          <a href="/staff" className="text-sm text-muted-foreground hover:text-foreground">Staff</a>
-          <a href="/services" className="text-sm text-muted-foreground hover:text-foreground">Services</a>
-        </div>
-
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="font-heading text-3xl italic text-foreground">
-            Customers
-          </h1>
-                    <div className="flex gap-3">
+    <AppShell>
+      <div className="mx-auto max-w-5xl px-8 py-10">
+        <PageHeader
+          title="Customers"
+          description={
+            customers
+              ? `${customers.length} customer${customers.length === 1 ? "" : "s"} on file`
+              : undefined
+          }
+          action={
             <Button onClick={() => router.push("/customers/new")}>
+              <Plus className="mr-1.5 h-4 w-4" />
               New Customer
             </Button>
-            <Button variant="outline" onClick={logout}>
-              Sign out
-            </Button>
-          </div>
-        </div>
+          }
+        />
 
-        {isLoading && (
-          <p className="text-muted-foreground">Loading customers...</p>
-        )}
-
-        {isError && (
-          <p className="text-destructive">
-            Couldn&apos;t load customers. Please try again.
-          </p>
-        )}
+        {isLoading && <p className="text-muted-foreground">Loading customers...</p>}
+        {isError && <p className="text-destructive">Couldn&apos;t load customers. Please try again.</p>}
 
         {customers && customers.length === 0 && (
-          <p className="text-muted-foreground">
-            No customers yet. Add your first one to get started.
-          </p>
+          <EmptyState
+            icon={Users}
+            title="No customers yet"
+            description="Add your first customer to start building your client base."
+            actionLabel="Add Customer"
+            onAction={() => router.push("/customers/new")}
+          />
         )}
 
         {customers && customers.length > 0 && (
@@ -69,14 +66,17 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody>
-                 {customers.map((customer) => (
+                {customers.map((customer) => (
                   <tr
                     key={customer.id}
                     onClick={() => router.push(`/customers/${customer.id}`)}
-                    className="cursor-pointer border-t border-border hover:bg-accent/40"
+                    className="cursor-pointer border-t border-border transition-colors hover:border-l-2 hover:border-l-primary hover:bg-accent/40"
                   >
-                    <td className="px-4 py-3 text-foreground">
-                      {customer.name}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <AvatarCircle name={customer.name} />
+                        <span className="text-foreground">{customer.name}</span>
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {customer.phone || "—"}
@@ -91,6 +91,6 @@ export default function CustomersPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppShell>
   );
 }

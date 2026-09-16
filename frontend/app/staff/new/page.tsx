@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppShell } from "@/components/app-shell";
 
 export default function NewStaffPage() {
   const { ready } = useAuthGuard();
@@ -38,8 +39,8 @@ export default function NewStaffPage() {
   if (!ready) return null;
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto max-w-lg">
+    <AppShell>
+      <div className="mx-auto max-w-lg px-8 py-10">
         <Card className="border-border/60">
           <CardHeader>
             <CardTitle className="font-heading text-2xl italic">New Staff Member</CardTitle>
@@ -79,6 +80,6 @@ export default function NewStaffPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AppShell>
   );
 }
