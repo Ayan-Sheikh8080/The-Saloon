@@ -52,3 +52,28 @@ export interface Service {
   created_at: string;
   updated_at: string;
 }
+export type AppointmentStatus =
+  | "pending"
+  | "confirmed"
+  | "checked_in"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "no_show";
+
+export interface Appointment {
+  id: number;
+  salon: number;
+  customer: number;
+  customer_name: string;
+  staff: number;
+  staff_name: string;
+  service: number;
+  service_name: string;
+  start_at: string;
+  end_at: string;
+  status: AppointmentStatus;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+}
