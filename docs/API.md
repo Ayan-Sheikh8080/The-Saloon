@@ -222,3 +222,38 @@ List services for the authenticated user's salon. `?search=<text>` filters by na
 
 ### GET/PUT/PATCH/DELETE /services/{id}/
 Same tenant rules as Customers.
+
+## Appointment Endpoints
+
+Same auth/tenant rules as Customers.
+
+### GET /appointments/availability/?staff=<id>&service=<id>&date=YYYY-MM-DD
+
+Returns available start times for a staff member + service on a given date, respecting business hours, existing bookings, and buffer time.
+
+**Success response — 200 OK:**
+```json
+{ "slots": ["2026-09-20T09:00:00+00:00", "2026-09-20T09:15:00+00:00", "..."] }
+```
+
+### GET /appointments/
+List appointments for the authenticated user's salon. `?date=YYYY-MM-DD` and `?staff=<id>` filter results.
+
+### POST /appointments/
+```json
+{
+  "customer": "id (required)",
+  "staff": "id (required)",
+  "service": "id (required)",
+  "start_at": "ISO datetime (required)",
+  "notes": "string (optional)"
+}
+```
+`end_at` is computed automatically from the service's duration. The server re-checks availability at creation time — returns `409 Conflict` if the slot was taken between checking availability and booking.
+
+**Error responses:**
+- `400 Bad Request` — missing fields, invalid staff/service ID
+- `409 Conflict` — slot no longer available
+
+### GET/PATCH/DELETE /appointments/{id}/
+Same tenant rules as Customers. PATCH can update `status` (e.g. to `confirmed`, `completed`, `cancelled`, `no_show`), `notes`, or reschedule via `start_at`.

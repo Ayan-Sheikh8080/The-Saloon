@@ -12,6 +12,8 @@ class Salon(models.Model):
     phone = models.CharField(max_length=30, blank=True)
     email = models.EmailField(blank=True)
     address = models.TextField(blank=True)
+    opening_time = models.TimeField(default="09:00")
+    closing_time = models.TimeField(default="21:00")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
