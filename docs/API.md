@@ -284,3 +284,37 @@ Full sale detail including items, payments, subtotal, total, amount_paid.
 
 ### GET /dashboard/
 Returns today's revenue, today's appointment count, total customers, and the 5 most recent appointments — scoped to the authenticated user's salon.
+
+## Inventory Endpoints
+
+Same auth/tenant rules as Customers.
+
+### GET /products/
+List products for the salon. `?search=<text>` filters by name. `?low_stock=true` returns only products at or below their reorder level.
+
+### POST /products/
+```json
+{
+  "name": "string (required)",
+  "sku": "string (optional)",
+  "price": "decimal string (required)",
+  "cost": "decimal string (optional, default 0)",
+  "reorder_level": "integer (optional, default 5)",
+  "initial_quantity": "integer (optional) — creates an initial 'received' transaction"
+}
+```
+
+### GET/PUT/PATCH/DELETE /products/{id}/
+Same tenant rules as Customers. Response includes computed `stock_quantity` and `is_low_stock`.
+
+### GET /products/{id}/transactions/
+Full transaction history for a product (audit trail).
+
+### POST /products/{id}/transactions/
+Records a stock adjustment — the only way stock quantity changes.
+```json
+{
+  "quantity_delta": "integer, positive for stock in, negative for stock out (required)",
+  "reason": "received | used | sold | correction | damaged (required)",
+  "notes": "string (optional)"
+}
