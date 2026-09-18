@@ -1,12 +1,13 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Users, UserRound, Scissors, Calendar, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, UserRound, Scissors, Calendar, LogOut } from "lucide-react";
 import { clearToken } from "@/lib/api";
 import { useCurrentUser } from "@/lib/use-current-user";
 
 const NAV_ITEMS = [
-    { href: "/appointments", label: "Appointments", icon: Calendar },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/appointments", label: "Appointments", icon: Calendar },
   { href: "/customers", label: "Customers", icon: Users },
   { href: "/staff", label: "Staff", icon: UserRound },
   { href: "/services", label: "Services", icon: Scissors },

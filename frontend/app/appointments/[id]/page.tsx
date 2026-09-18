@@ -120,9 +120,20 @@ export default function AppointmentDetailPage({
             )}
 
             {isFinal && (
-              <p className="text-sm capitalize text-muted-foreground">
-                Status: {appt.status.replace("_", " ")}
-              </p>
+              <div className="space-y-3">
+                <p className="text-sm capitalize text-muted-foreground">
+                  Status: {appt.status.replace("_", " ")}
+                </p>
+                {appt.status === "completed" && (
+                  <Button
+                    type="button"
+                    className="w-full"
+                    onClick={() => router.push(`/checkout/${appt.id}`)}
+                  >
+                    Go to Checkout
+                  </Button>
+                )}
+              </div>
             )}
 
             {!isFinal && (
