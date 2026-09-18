@@ -257,3 +257,30 @@ List appointments for the authenticated user's salon. `?date=YYYY-MM-DD` and `?s
 
 ### GET/PATCH/DELETE /appointments/{id}/
 Same tenant rules as Customers. PATCH can update `status` (e.g. to `confirmed`, `completed`, `cancelled`, `no_show`), `notes`, or reschedule via `start_at`.
+
+## Sale / Payment Endpoints
+
+Same auth/tenant rules as Customers.
+
+### POST /sales/from-appointment/
+Creates a Sale pre-filled from a completed appointment's service (idempotent — calling again for the same appointment returns the existing sale).
+```json
+{ "appointment": "id (required)" }
+```
+
+### POST /sales/{id}/pay/
+Records a payment against a sale. Marks the sale `paid` once payments cover the total.
+```json
+{ "method": "cash | card | other", "amount": "decimal string" }
+```
+
+### GET /sales/
+List sales for the salon. `?date=YYYY-MM-DD` filters by creation date.
+
+### GET /sales/{id}/
+Full sale detail including items, payments, subtotal, total, amount_paid.
+
+## Dashboard Endpoint
+
+### GET /dashboard/
+Returns today's revenue, today's appointment count, total customers, and the 5 most recent appointments — scoped to the authenticated user's salon.
