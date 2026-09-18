@@ -77,3 +77,48 @@ export interface Appointment {
   created_at: string;
   updated_at: string;
 }
+export interface DashboardData {
+  today_revenue: string;
+  today_appointment_count: number;
+  total_customers: number;
+  recent_appointments: {
+    id: number;
+    customer_name: string;
+    service_name: string;
+    staff_name: string;
+    start_at: string;
+    status: string;
+  }[];
+}
+export interface SaleItem {
+  id: number;
+  service: number | null;
+  description: string;
+  price: string;
+  quantity: number;
+  line_total: string;
+}
+
+export interface Payment {
+  id: number;
+  method: "cash" | "card" | "other";
+  amount: string;
+  created_at: string;
+}
+
+export interface Sale {
+  id: number;
+  salon: number;
+  customer: number;
+  customer_name: string;
+  appointment: number | null;
+  discount: string;
+  status: "open" | "paid" | "void";
+  items: SaleItem[];
+  payments: Payment[];
+  subtotal: string;
+  total: string;
+  amount_paid: string;
+  created_at: string;
+  updated_at: string;
+}
