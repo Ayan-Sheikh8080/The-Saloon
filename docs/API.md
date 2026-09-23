@@ -318,3 +318,36 @@ Records a stock adjustment — the only way stock quantity changes.
   "reason": "received | used | sold | correction | damaged (required)",
   "notes": "string (optional)"
 }
+## Retention Endpoints
+
+### GET /customers/due-for-rebooking/
+
+Returns customers who are overdue for a repeat visit, based on their historical average interval between completed appointments. Requires at least 2 completed appointments to calculate a pattern.
+
+**Query params:** `?template=<id>` — attaches a rendered `draft_message` to each result using the given MessageTemplate.
+
+**Success response — 200 OK:**
+```json
+[
+  {
+    "customer_id": 5,
+    "customer_name": "string",
+    "last_visit": "YYYY-MM-DD",
+    "days_since_last_visit": 64,
+    "average_interval_days": 20.0,
+    "is_due": true,
+    "days_overdue": 44,
+    "draft_message": "string (only present if ?template= was passed)"
+  }
+]
+```
+
+## Message Template Endpoints
+
+Same auth/tenant rules as Customers.
+
+### GET/POST /marketing/templates/
+List or create message templates. `body` supports `{customer_name}` and `{salon_name}` placeholders.
+
+### GET/PUT/PATCH/DELETE /marketing/templates/{id}/
+Standard CRUD, tenant-isolated.

@@ -13,6 +13,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             "email",
             "date_of_birth",
             "notes",
+            "marketing_consent",
             "created_at",
             "updated_at",
         ]
