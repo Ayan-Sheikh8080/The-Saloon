@@ -13,6 +13,7 @@ class Customer(models.Model):
     email = models.EmailField(blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     notes = models.TextField(blank=True)
+    marketing_consent = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
