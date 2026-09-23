@@ -122,3 +122,26 @@ export interface Sale {
   created_at: string;
   updated_at: string;
 }
+export interface InventoryTransaction {
+  id: number;
+  quantity_delta: number;
+  reason: "received" | "used" | "sold" | "correction" | "damaged";
+  notes: string;
+  created_by: number | null;
+  created_at: string;
+}
+
+export interface Product {
+  id: number;
+  salon: number;
+  name: string;
+  sku: string;
+  price: string;
+  cost: string;
+  reorder_level: number;
+  is_active: boolean;
+  stock_quantity: number;
+  is_low_stock: boolean;
+  created_at: string;
+  updated_at: string;
+}
