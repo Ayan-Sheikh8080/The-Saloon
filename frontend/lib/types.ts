@@ -145,3 +145,22 @@ export interface Product {
   created_at: string;
   updated_at: string;
 }
+export interface MessageTemplate {
+  id: number;
+  salon: number;
+  name: string;
+  body: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RebookingCustomer {
+  customer_id: number;
+  customer_name: string;
+  last_visit: string;
+  days_since_last_visit: number;
+  average_interval_days: number;
+  is_due: boolean;
+  days_overdue: number;
+  draft_message?: string;
+}

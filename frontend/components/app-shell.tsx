@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, UserRound, Scissors, Calendar, Package, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, UserRound, Scissors, Calendar, Package, MessageCircleHeart, LogOut } from "lucide-react";
 import { clearToken } from "@/lib/api";
 import { useCurrentUser } from "@/lib/use-current-user";
 
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/staff", label: "Staff", icon: UserRound },
   { href: "/services", label: "Services", icon: Scissors },
   { href: "/inventory", label: "Inventory", icon: Package },
+  { href: "/retention", label: "Retention", icon: MessageCircleHeart },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
