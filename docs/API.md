@@ -351,3 +351,22 @@ List or create message templates. `body` supports `{customer_name}` and `{salon_
 
 ### GET/PUT/PATCH/DELETE /marketing/templates/{id}/
 Standard CRUD, tenant-isolated.
+
+## Loyalty & Membership Endpoints
+
+Same auth/tenant rules as Customers.
+
+### GET /customers/{id}/loyalty/
+Returns current points balance and recent transaction history for a customer.
+
+### POST /customers/{id}/loyalty/redeem/
+Redeems points for a discount (deducts from balance).
+```json
+{ "points": "integer (required)", "notes": "string (optional)" }
+```
+Returns `400` if points exceed the current balance.
+
+Points are auto-awarded (1 point per Rs. 10) when a sale is marked `paid` — no manual action needed.
+
+### GET/POST /loyalty/plans/
+List or create membership plans (name, discount_percent, duration_days,
