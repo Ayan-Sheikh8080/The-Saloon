@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from sales.models import Sale, SaleItem, Payment
 from sales.serializers import SaleSerializer
 from appointments.models import Appointment
+from loyalty.services import award_points_for_sale
 
 
 class IsSalonMember(permissions.BasePermission):
@@ -28,10 +29,6 @@ class SaleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="from-appointment")
     def from_appointment(self, request):
-        """
-        Create a Sale pre-filled from a completed appointment's
-        service. This is the main entry point into checkout.
-        """
         salon = request.user.profile.salon
         appointment_id = request.data.get("appointment")
 
@@ -66,10 +63,6 @@ class SaleViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="pay")
     def pay(self, request, pk=None):
-        """
-        Record a payment against this sale. If total payments
-        now cover the sale total, mark it paid.
-        """
         sale = self.get_object()
         method = request.data.get("method")
         amount_raw = request.data.get("amount")
@@ -92,6 +85,7 @@ class SaleViewSet(viewsets.ModelViewSet):
         if sale.amount_paid >= sale.total:
             sale.status = "paid"
             sale.save()
+            award_points_for_sale(sale)
 
         return Response(SaleSerializer(sale).data)
 
