@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api";
-import { Customer } from "@/lib/types";
+import { Customer, LoyaltyInfo } from "@/lib/types";
 import { useAuthGuard } from "@/lib/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,10 +28,29 @@ export default function EditCustomerPage({
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: customer, isLoading } = useQuery({
+    const { data: customer, isLoading } = useQuery({
     queryKey: ["customers", id],
     queryFn: () => api.get<Customer>(`/customers/${id}/`),
     enabled: ready,
+  });
+
+  const { data: loyalty } = useQuery({
+    queryKey: ["loyalty", id],
+    queryFn: () => api.get<LoyaltyInfo>(`/loyalty/customers/${id}/loyalty/`),
+    enabled: ready,
+  });
+
+  const [redeemPoints, setRedeemPoints] = useState("");
+
+  const redeemMutation = useMutation({
+    mutationFn: () =>
+      api.post<{ balance: number }>(`/loyalty/customers/${id}/loyalty/redeem/`, {
+        points: Number(redeemPoints),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["loyalty", id] });
+      setRedeemPoints("");
+    },
   });
 
   const [name, setName] = useState("");
@@ -183,6 +202,56 @@ export default function EditCustomerPage({
             </form>
           </CardContent>
         </Card>
+        {loyalty && (
+          <Card className="mt-6 border-border/60">
+            <CardHeader>
+              <CardTitle className="font-heading text-xl italic">Loyalty Points</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-3xl font-medium text-foreground">{loyalty.balance} pts</p>
+
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  min="1"
+                  placeholder="Points to redeem"
+                  value={redeemPoints}
+                  onChange={(e) => setRedeemPoints(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => redeemMutation.mutate()}
+                  disabled={!redeemPoints || redeemMutation.isPending}
+                >
+                  Redeem
+                </Button>
+              </div>
+
+              {redeemMutation.isError && (
+                <p className="text-sm text-destructive">
+                  {redeemMutation.error instanceof ApiError
+                    ? redeemMutation.error.message
+                    : "Something went wrong."}
+                </p>
+              )}
+
+              {loyalty.transactions.length > 0 && (
+                <div className="space-y-1 border-t border-border pt-3">
+                  {loyalty.transactions.slice(0, 5).map((t) => (
+                    <div key={t.id} className="flex justify-between text-sm">
+                      <span className="text-muted-foreground capitalize">{t.reason}</span>
+                      <span className={t.points_delta > 0 ? "text-chart-2" : "text-destructive"}>
+                        {t.points_delta > 0 ? "+" : ""}
+                        {t.points_delta}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </AppShell>
   );

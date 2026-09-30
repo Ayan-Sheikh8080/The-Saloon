@@ -164,3 +164,40 @@ export interface RebookingCustomer {
   days_overdue: number;
   draft_message?: string;
 }
+export interface LoyaltyTransaction {
+  id: number;
+  sale: number | null;
+  points_delta: number;
+  reason: "earned" | "redeemed" | "adjustment" | "expired";
+  notes: string;
+  created_at: string;
+}
+
+export interface LoyaltyInfo {
+  customer_id: number;
+  balance: number;
+  transactions: LoyaltyTransaction[];
+}
+
+export interface MembershipPlan {
+  id: number;
+  salon: number;
+  name: string;
+  description: string;
+  discount_percent: string;
+  duration_days: number;
+  price: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface CustomerMembership {
+  id: number;
+  customer: number;
+  customer_name: string;
+  plan: number;
+  plan_name: string;
+  started_at: string;
+  expires_at: string;
+  is_active: boolean;
+}
