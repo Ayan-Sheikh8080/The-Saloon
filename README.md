@@ -1,23 +1,31 @@
 # The-Saloon
 
-A multi-tenant SaaS platform for salons, barbershops, and beauty businesses — appointments, customers, staff, payments, and AI/WhatsApp-assisted retention, built as a modular Django monolith with a Next.js frontend.
+A multi-tenant platform for salons, barbershops, and beauty businesses. The current application includes authentication, salon-scoped customer, staff, and service management, and a Next.js dashboard. Appointments, payments, analytics, retention automation, WhatsApp, and AI features are planned.
 
 ## Project Structure
 
-- `frontend/` — Next.js 16 (App Router, TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query)
-- `backend/` — Django REST Framework API (modular monolith)
-- `docs/` — API documentation and project docs
+- `frontend/` — Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui, and TanStack Query
+- `backend/` — Django REST Framework modular monolith
+- `docs/` — API reference and product documentation
 
 ## Current Status
 
 **Implemented:**
-- Token-based authentication (register, login, current-user endpoint)
-- Multi-tenant salon architecture with role-based access (owner / manager / staff)
-- Backend-enforced tenant isolation — every request is scoped to the authenticated user's salon, verified with cross-tenant access tests
-- Customer, Staff, and Service CRUD — create, list, search, update, delete — all tenant-isolated
-- Full dashboard UI: sidebar navigation, list views with live counts, avatars, status badges, empty states, and add/edit/delete forms for all three modules
+- Token-based registration, login, and current-user endpoint
+- Multi-tenant salon structure with owner, manager, and staff roles
+- Backend tenant isolation, including cross-tenant access tests
+- Tenant-scoped CRUD and search for customers, staff, and services
+- Dashboard navigation and list views for customers, staff, and services
+- Live counts, avatars, status badges, empty states, and add/edit/delete forms
 
-**Planned next:** Appointments (with availability logic), POS/Payments, Dashboard/analytics, Retention automation, WhatsApp and AI integration. See `docs/API.md` for the full endpoint contract and the product blueprint in `docs/` for the complete roadmap.
+**Not yet implemented:**
+- Appointments and availability
+- POS and payments
+- Dashboard analytics
+- Retention automation
+- WhatsApp and AI integrations
+
+See [`docs/API.md`](./docs/API.md) for the current API contract and the project documentation in `docs/` for the roadmap.
 
 ## Tech Stack
 
@@ -25,43 +33,43 @@ A multi-tenant SaaS platform for salons, barbershops, and beauty businesses — 
 |---|---|
 | Frontend | Next.js, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query |
 | Backend | Django, Django REST Framework |
-| Database | PostgreSQL (SQLite in local development) |
-| Auth | DRF Token Authentication |
+| Database | PostgreSQL; SQLite for local development |
+| Authentication | DRF Token Authentication |
 
 ## Getting Started
 
 ### Backend
 
-```bash
+From the repository root, run these commands in PowerShell:
+
+```powershell
 cd backend
-source venv/Scripts/activate
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
 
-Runs at `http://127.0.0.1:8000`. API is served under `/api/`.
+The API runs at `http://127.0.0.1:8000` under `/api/`.
 
 ### Frontend
 
-```bash
+In a second terminal:
+
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-Runs at `http://localhost:3000`. Requires the backend running for API calls to succeed.
-
-## API Documentation
-
-Full endpoint reference — methods, request/response bodies, auth requirements, and error cases — is maintained in [`docs/API.md`](./docs/API.md).
+The frontend runs at `http://localhost:3000` and requires the backend to be running for API requests.
 
 ## Multi-Tenancy
 
-Every salon-owned record (customers, and future modules) belongs to exactly one salon via a `salon` foreign key. All queries are automatically filtered to the authenticated user's own salon at the backend — a user from one salon can never read, edit, or delete another salon's data, even by guessing record IDs directly.
+Customers, staff, and services are associated with a salon. Backend queries are scoped to the authenticated user's salon, preventing users from accessing another salon's records, including by guessing record IDs.
 
 ## Git Workflow
 
-- `main` is always stable
-- One feature = one branch = one Pull Request
-- Feature branches: `feature/<name>`
+- Keep `main` stable.
+- Use one feature branch and pull request per feature.
+- Name feature branches `feature/<name>`.
