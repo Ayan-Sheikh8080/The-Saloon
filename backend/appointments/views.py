@@ -8,6 +8,10 @@ from appointments.serializers import AppointmentSerializer
 from appointments.availability import get_available_slots, is_slot_available
 from staff.models import Staff
 from services.models import Service
+from whatsapp.services import WhatsAppError, send_appointment_confirmation
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class IsSalonMember(permissions.BasePermission):
@@ -69,8 +73,36 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(salon=salon, end_at=end_at)
+        appointment = serializer.instance
+
+        # WhatsApp notification failure must not cancel a successfully
+        # created appointment. Celery/background jobs can be added later.
+        if appointment.customer.phone:
+            try:
+                send_appointment_confirmation(appointment)
+            except WhatsAppError:
+                logger.exception(
+                    "WhatsApp appointment confirmation failed for appointment %s",
+                    appointment.id,
+                )
+            except Exception:
+                logger.exception(
+                    "Unexpected WhatsApp error for appointment %s",
+                    appointment.id,
+                )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_update(self, serializer):
+        old_start_at = self.get_object().start_at
+        appointment = serializer.save()
+
+        # If an appointment is rescheduled, it should become eligible for a
+        # new 24-hour reminder.
+        if appointment.start_at != old_start_at:
+            Appointment.objects.filter(pk=appointment.pk).update(
+                reminder_sent_at=None
+            )
 
     @action(detail=False, methods=["get"], url_path="availability")
     def availability(self, request):
