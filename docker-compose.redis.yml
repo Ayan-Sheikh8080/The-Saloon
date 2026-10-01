@@ -1,0 +1,12 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: the-saloon-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - saloon_redis_data:/data
+
+volumes:
+  saloon_redis_data:
